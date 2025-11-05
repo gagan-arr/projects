@@ -1,4 +1,4 @@
-name: CI/CD for ci-cd-demo
+name: CI/CD for ci-cd-demo (multi-project repo)
 
 on:
   push:
@@ -9,13 +9,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ci-cd-demo  # 👈 This makes all steps run inside the subfolder
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Debug - Show working directory
+        run: |
+          pwd
+          ls -R
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -23,10 +27,14 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd ci-cd-demo
+          npm install
 
       - name: Run tests
-        run: npm test
+        run: |
+          cd ci-cd-demo
+          npm test
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -37,7 +45,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./ci-cd-demo
