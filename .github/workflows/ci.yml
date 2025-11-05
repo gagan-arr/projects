@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI/CD for ci-cd-demo
 
 on:
   push:
@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ci-cd-demo  # 👈 This makes all steps run inside the subfolder
 
     steps:
       - name: Checkout code
@@ -21,14 +24,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        working-directory: ./ci-cd-demo
 
       - name: Run tests
         run: npm test
-        working-directory: ./ci-cd-demo
 
-      # Enable Docker for GitHub-hosted runner
-      - name: Set up Docker
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
@@ -37,8 +37,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
           context: ./ci-cd-demo
           file: ./ci-cd-demo/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ci-cd-demo:latest
