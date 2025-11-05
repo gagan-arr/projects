@@ -1,0 +1,20 @@
+{
+  "name": "ci-cd-demo",
+  "version": "1.0.0",
+  "description": "A simple CI/CD demo app using Node.js, Docker, and GitHub Actions",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Gagan Ramesh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "supertest": "^7.1.4"
+  }
+}
